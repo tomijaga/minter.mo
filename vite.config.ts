@@ -1,9 +1,9 @@
-import { defineConfig } from "vite"
 import reactRefresh from "@vitejs/plugin-react-refresh"
-import path from "path"
-import dfxJson from "./dfx.json"
 import fs from "fs"
-
+import path from "path"
+import { defineConfig } from "vite"
+import vitePluginImp from "vite-plugin-imp"
+import dfxJson from "./dfx.json"
 const isDev = process.env["DFX_NETWORK"] !== "ic"
 
 type Network = "ic" | "local"
@@ -22,7 +22,7 @@ try {
       .toString(),
   )
 } catch (e) {
-    console.error("\n⚠️  Before starting the dev server run: dfx deploy\n\n")
+  console.error("\n⚠️  Before starting the dev server run: dfx deploy\n\n")
 }
 
 // List of all aliases for canisters
@@ -65,7 +65,31 @@ const DFX_PORT = dfxJson.networks.local.bind.split(":")[1]
 // See guide on how to configure Vite at:
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [reactRefresh()],
+  plugins: [
+    reactRefresh(),
+    vitePluginImp({
+      libList: [
+        {
+          libName: "antd",
+          style: (name) => {
+            if (name === "col" || name === "row") {
+              return "antd/lib/style/index.less"
+            }
+            return `antd/es/${name}/style/index.less`
+          },
+        },
+      ],
+    }),
+  ],
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+        modifyVars: { "@primary-color": "#1DA57A" },
+      },
+    },
+  },
+
   resolve: {
     alias: {
       // Here we tell Vite the "fake" modules that we want to define

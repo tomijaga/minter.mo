@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react"
 import { AuthClient } from "@dfinity/auth-client"
-import dfinityLogo from "./assets/dfinity.svg"
+import React, { useEffect, useState } from "react"
+import dfinityLogo from "../../assets/dfinity.svg"
+import { Plug } from "./Plug"
 
 // Note: This is just a basic example to get you started
 function Auth() {
@@ -22,6 +23,8 @@ function Auth() {
     }
   }
 
+  const daysToLive = BigInt(1)
+
   const signIn = async () => {
     const { identity, principal } = await new Promise((resolve, reject) => {
       client.login({
@@ -32,6 +35,8 @@ function Auth() {
           resolve({ identity, principal })
         },
         onError: reject,
+        maxTimeToLive:
+          daysToLive * BigInt(24) * BigInt(3600) * BigInt(1000000000),
       })
     })
     setSignedIn(true)
@@ -50,21 +55,26 @@ function Auth() {
 
   return (
     <div className="auth-section">
-
       {!signedIn && client ? (
         <button onClick={signIn} className="auth-button">
           Sign in
-          <img style={{ width: "33px", marginRight: "-1em", marginLeft: "0.7em" }} src={dfinityLogo} />
+          <img
+            style={{ width: "33px", marginRight: "-1em", marginLeft: "0.7em" }}
+            src={dfinityLogo}
+          />
         </button>
       ) : null}
 
       {signedIn ? (
         <>
           <p>Signed in as: {principal}</p>
-          <button onClick={signOut} className="auth-button">Sign out</button>
+          <button onClick={signOut} className="auth-button">
+            Sign out
+          </button>
+          <Plug />
+          <button>Pair Stoic</button>
         </>
       ) : null}
-
     </div>
   )
 }

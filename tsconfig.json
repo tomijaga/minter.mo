@@ -23,8 +23,8 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "canisters/counter": [
-        ".dfx/local/canisters/counter"
+      "canisters/backend": [
+        ".dfx/local/canisters/backend"
       ]
     }
   },
